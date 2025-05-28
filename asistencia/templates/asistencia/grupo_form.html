@@ -1,0 +1,20 @@
+{% extends 'asistencia/base.html' %}
+{% block content %}
+<h2>Crear Nuevo Grupo</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_nombre" class="form-label">Nombre</label>
+        {{ form.nombre }}
+    </div>
+    <div class="mb-3">
+        <label for="id_lider" class="form-label">Líder</label>
+        {{ form.lider }}
+    </div>
+    <div class="mb-3">
+        <label for="id_descripcion" class="form-label">Descripción</label>
+        {{ form.descripcion }}
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

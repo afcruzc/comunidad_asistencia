@@ -1,0 +1,5 @@
+{% for asistente in asistentes %}
+<option value="{{ asistente.id }}">{{ asistente.nombre }}</option>
+{% empty %}
+<option value="">No hay asistentes en este grupo</option>
+{% endfor %}

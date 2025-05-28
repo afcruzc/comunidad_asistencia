@@ -1,0 +1,31 @@
+{% extends 'asistencia/base.html' %}
+{% block content %}
+<h2>Asistentes</h2>
+<a href="{% url 'asistente_create' %}" class="btn btn-primary mb-3">Nuevo Asistente</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Grupos</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for asistente in asistentes %}
+        <tr>
+            <td>{{ asistente.nombre }}</td>
+            <td>{{ asistente.correo }}</td>
+            <td>
+                {% for grupo in asistente.grupos.all %}
+                {{ grupo.nombre }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <a href="{% url 'dashboard_asistente' asistente.id %}" class="btn btn-info btn-sm">Ver Dashboard</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

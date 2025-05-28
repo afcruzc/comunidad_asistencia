@@ -1,0 +1,21 @@
+{% extends 'asistencia/base.html' %}
+{% block content %}
+<h2>Dashboard de {{ grupo.nombre }}</h2>
+<h4>Resumen de Asistencias (Todas las Reuniones)</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Estado</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for asistencia in asistencias %}
+        <tr>
+            <td>{{ asistencia.estado }}</td>
+            <td>{{ asistencia.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

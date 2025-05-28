@@ -1,0 +1,23 @@
+{% extends 'asistencia/base.html' %}
+{% block content %}
+<h2>Dashboard de {{ asistente.nombre }}</h2>
+<h4>Historial de Asistencias (Todas las Reuniones)</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Reunión</th>
+            <th>Estado</th>
+            <th>Notas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for asistencia in asistencias %}
+        <tr>
+            <td>{{ asistencia.reunion.fecha }} - {{ asistencia.reunion.descripcion|default:"Sin descripción" }}</td>
+            <td>{{ asistencia.estado }}</td>
+            <td>{{ asistencia.notas|default:"Sin notas" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

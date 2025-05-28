@@ -1,0 +1,42 @@
+{% extends 'asistencia/base.html' %}
+{% block content %}
+<h2>Crear Nuevo Asistente</h2>
+<form method="post">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div class="mb-3">
+        <label for="id_nombre" class="form-label">Nombre</label>
+        {{ form.nombre }}
+    </div>
+    <div class="mb-3">
+        <label for="id_correo" class="form-label">Correo</label>
+        {{ form.correo }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Grupos</label>
+        {% for grupo in form.grupos.field.queryset %}
+        <div class="form-check">
+            <input type="checkbox" name="grupos" value="{{ grupo.id }}" id="id_grupos_{{ grupo.id }}"
+                class="form-check-input">
+            <label class="form-check-label" for="id_grupos_{{ grupo.id }}">{{ grupo.nombre }}</label>
+        </div>
+        {% empty %}
+        <p>No hay grupos disponibles. <a href="{% url 'grupo_create' %}">Crea un grupo primero</a>.</p>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

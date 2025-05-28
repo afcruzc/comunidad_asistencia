@@ -1,0 +1,59 @@
+{% extends 'asistencia/base.html' %}
+{% block content %}
+<h2>Registrar Asistencia</h2>
+<form method="post">
+    {% csrf_token %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div class="mb-3">
+        <label for="id_grupo" class="form-label">Grupo</label>
+        {{ form.grupo }}
+    </div>
+    <div class="mb-3">
+        <label for="id_asistente" class="form-label">Asistente</label>
+        {{ form.asistente }}
+    </div>
+    <div class="mb-3">
+        <label for="id_reunion" class="form-label">Reunión</label>
+        {{ form.reunion }}
+    </div>
+    <div class="mb-3">
+        <label for="id_estado" class="form-label">Estado</label>
+        {{ form.estado }}
+    </div>
+    <div class="mb-3">
+        <label for="id_notas" class="form-label">Notas</label>
+        {{ form.notas }}
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+<!-- Incluye jQuery para AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#id_grupo').change(function () {
+            var grupoId = $(this).val();
+            $.ajax({
+                url: '{% url "filter_asistentes" %}',
+                data: { 'grupo_id': grupoId },
+                success: function (data) {
+                    $('#id_asistente').html(data);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
