@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from .forms import AsistenciaForm
+from django.utils import timezone
 
 # Vista para listar grupos
 class GrupoListView(LoginRequiredMixin, ListView):
@@ -33,6 +34,13 @@ class AsistenteCreateView(LoginRequiredMixin, CreateView):
     template_name = 'asistencia/asistente_form.html'
     success_url = reverse_lazy('asistente_list')
 
+# Vista para editar un asistente
+class AsistenteUpdateView(LoginRequiredMixin, UpdateView):
+    model = Asistente
+    fields = ['nombre', 'correo', 'grupos']
+    template_name = 'asistencia/asistente_form.html'
+    success_url = reverse_lazy('asistente_list')
+
 # Vista para registrar asistencia
 class AsistenciaCreateView(LoginRequiredMixin, CreateView):
     model = Asistencia
@@ -47,7 +55,7 @@ def filter_asistentes(request):
     asistentes = Asistente.objects.filter(grupos__id=grupo_id).distinct()
     return render(request, 'asistencia/asistentes_dropdown.html', {'asistentes': asistentes})
 
-# Nueva vista para buscar asistentes por nombre
+# Vista para buscar asistentes por nombre
 @login_required
 def search_asistentes(request):
     query = request.GET.get('query', '')
@@ -69,17 +77,27 @@ class ReunionCreateView(LoginRequiredMixin, CreateView):
 def dashboard_grupo(request, grupo_id):
     grupo = GrupoTrabajo.objects.get(id=grupo_id)
     asistencias = Asistencia.objects.filter(asistente__grupos=grupo).values('estado').annotate(total=Count('estado'))
+    labels = [item['estado'] for item in asistencias]
+    data = [item['total'] for item in asistencias]
+    print(f"Labels: {labels}, Data: {data}")  # Depuración
     return render(request, 'asistencia/dashboard_grupo.html', {
         'grupo': grupo,
         'asistencias': asistencias,
+        'chart_labels': labels,
+        'chart_data': data,
     })
 
 # Dashboard por asistente
 @login_required
 def dashboard_asistente(request, asistente_id):
     asistente = Asistente.objects.get(id=asistente_id)
-    asistencias = Asistencia.objects.filter(asistente=asistente)
+    asistencias = Asistencia.objects.filter(asistente=asistente).order_by('reunion__fecha')
+    # Preparar datos para el gráfico (ejemplo: asistencias por fecha)
+    labels = [a.reunion.fecha.strftime('%Y-%m-%d') for a in asistencias]
+    data = [1 if a.estado == 'ASISTIO' else 0 for a in asistencias]  # 1 para asistió, 0 para no asistió
     return render(request, 'asistencia/dashboard_asistente.html', {
         'asistente': asistente,
         'asistencias': asistencias,
+        'chart_labels': labels,
+        'chart_data': data,
     })

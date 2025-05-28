@@ -1,23 +1,52 @@
 {% extends 'asistencia/base.html' %}
 {% block content %}
-<h2>Dashboard de {{ asistente.nombre }}</h2>
-<h4>Historial de Asistencias (Todas las Reuniones)</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Reunión</th>
-            <th>Estado</th>
-            <th>Notas</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for asistencia in asistencias %}
-        <tr>
-            <td>{{ asistencia.reunion.fecha }} - {{ asistencia.reunion.descripcion|default:"Sin descripción" }}</td>
-            <td>{{ asistencia.estado }}</td>
-            <td>{{ asistencia.notas|default:"Sin notas" }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container mt-4">
+    <h2>Dashboard - {{ asistente.nombre }}</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Resumen de Asistencias
+                </div>
+                <div class="card-body">
+                    <p>Total de asistencias: {{ asistencias|length }}</p>
+                    {% for asistencia in asistencias %}
+                    <p>{{ asistencia.reunion.fecha }} - {{ asistencia.estado }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Gráfico de Asistencias
+                </div>
+                <div class="card-body">
+                    <canvas id="asistenciaChart"></canvas>
+                    <script>
+                        var ctx = document.getElementById('asistenciaChart').getContext('2d');
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: {{ chart_labels| safe }},
+                            datasets: [{
+                                data: {{ chart_data| safe }},
+                            backgroundColor: ["#28a745", "#ffc107", "#dc3545"],
+                            borderWidth: 1
+                                        }]
+                                    },
+                            options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'top' },
+                                title: { display: true, text: 'Distribución de Asistencias' }
+                            }
+                        }
+                                });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'asistencia/base.html' %}
 {% block content %}
-<h2>Crear Nuevo Asistente</h2>
+<h2>{% if object %}Editar Asistente{% else %}Crear Nuevo Asistente{% endif %}</h2>
 <form method="post">
     {% csrf_token %}
     {% if form.errors %}
@@ -30,7 +30,7 @@
         {% for grupo in form.grupos.field.queryset %}
         <div class="form-check">
             <input type="checkbox" name="grupos" value="{{ grupo.id }}" id="id_grupos_{{ grupo.id }}"
-                class="form-check-input">
+                class="form-check-input" {% if grupo.id in form.grupos.value %}checked{% endif %}>
             <label class="form-check-label" for="id_grupos_{{ grupo.id }}">{{ grupo.nombre }}</label>
         </div>
         {% empty %}

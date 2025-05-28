@@ -1,21 +1,57 @@
 {% extends 'asistencia/base.html' %}
 {% block content %}
-<h2>Dashboard de {{ grupo.nombre }}</h2>
-<h4>Resumen de Asistencias (Todas las Reuniones)</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Estado</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for asistencia in asistencias %}
-        <tr>
-            <td>{{ asistencia.estado }}</td>
-            <td>{{ asistencia.total }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<style>
+    #asistenciaChart {
+        max-height: 300px;
+    }
+</style>
+<div class="container mt-4">
+    <h2>Dashboard - {{ grupo.nombre }}</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Resumen de Asistencias
+                </div>
+                <div class="card-body">
+                    <p>Total de asistencias: {{ asistencias|length }}</p>
+                    {% for asistencia in asistencias %}
+                    <p>{{ asistencia.estado }}: {{ asistencia.total }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Gráfico de Asistencias
+                </div>
+                <div class="card-body">
+                    <canvas id="asistenciaChart"></canvas>
+                    <script>
+                        var ctx = document.getElementById('asistenciaChart').getContext('2d');
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: {{ chart_labels| safe }},
+                            datasets: [{
+                                data: {{ chart_data| safe }},
+                            backgroundColor: ["#28a745", "#ffc107", "#dc3545"],
+                            borderWidth: 1
+                                }]
+                            },
+                            options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'top' },
+                                title: { display: true, text: 'Distribución de Asistencias' }
+                            }
+                        }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
