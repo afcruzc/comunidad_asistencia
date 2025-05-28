@@ -1,0 +1,7 @@
+{% for asistente in asistentes %}
+<li class="list-group-item asistente-option" data-id="{{ asistente.id }}" style="cursor: pointer;">
+    {{ asistente.nombre }}
+</li>
+{% empty %}
+<li class="list-group-item">No se encontraron asistentes</li>
+{% endfor %}

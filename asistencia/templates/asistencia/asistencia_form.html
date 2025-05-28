@@ -18,12 +18,10 @@
     </div>
     {% endif %}
     <div class="mb-3">
-        <label for="id_grupo" class="form-label">Grupo</label>
-        {{ form.grupo }}
-    </div>
-    <div class="mb-3">
-        <label for="id_asistente" class="form-label">Asistente</label>
-        {{ form.asistente }}
+        <label for="id_asistente_search" class="form-label">Buscar Asistente</label>
+        <input type="text" id="id_asistente_search" class="form-control" placeholder="Escribe el nombre del asistente">
+        <input type="hidden" name="asistente" id="id_asistente" value="">
+        <ul id="asistente_results" class="list-group mt-2" style="max-height: 200px; overflow-y: auto;"></ul>
     </div>
     <div class="mb-3">
         <label for="id_reunion" class="form-label">Reunión</label>
@@ -44,15 +42,35 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#id_grupo').change(function () {
-            var grupoId = $(this).val();
-            $.ajax({
-                url: '{% url "filter_asistentes" %}',
-                data: { 'grupo_id': grupoId },
-                success: function (data) {
-                    $('#id_asistente').html(data);
-                }
-            });
+        $('#id_asistente_search').on('input', function () {
+            var query = $(this).val();
+            if (query.length > 0) {
+                $.ajax({
+                    url: '{% url "search_asistentes" %}',
+                    data: { 'query': query },
+                    success: function (data) {
+                        $('#asistente_results').html(data);
+                    }
+                });
+            } else {
+                $('#asistente_results').empty();
+                $('#id_asistente').val('');
+            }
+        });
+
+        $(document).on('click', '.asistente-option', function () {
+            var asistenteId = $(this).data('id');
+            var asistenteNombre = $(this).text().trim();
+            $('#id_asistente_search').val(asistenteNombre);
+            $('#id_asistente').val(asistenteId);
+            $('#asistente_results').empty();
+        });
+
+        // Limpiar el campo oculto si se borra el texto
+        $('#id_asistente_search').on('change', function () {
+            if ($(this).val() === '') {
+                $('#id_asistente').val('');
+            }
         });
     });
 </script>

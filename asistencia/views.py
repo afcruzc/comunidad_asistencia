@@ -40,12 +40,22 @@ class AsistenciaCreateView(LoginRequiredMixin, CreateView):
     template_name = 'asistencia/asistencia_form.html'
     success_url = reverse_lazy('grupo_list')
 
-# Nueva vista para filtrar asistentes por grupo
+# Vista para filtrar asistentes por grupo
 @login_required
 def filter_asistentes(request):
     grupo_id = request.GET.get('grupo_id')
     asistentes = Asistente.objects.filter(grupos__id=grupo_id).distinct()
     return render(request, 'asistencia/asistentes_dropdown.html', {'asistentes': asistentes})
+
+# Nueva vista para buscar asistentes por nombre
+@login_required
+def search_asistentes(request):
+    query = request.GET.get('query', '')
+    if query:
+        asistentes = Asistente.objects.filter(nombre__icontains=query).distinct()
+    else:
+        asistentes = Asistente.objects.none()
+    return render(request, 'asistencia/asistentes_search_results.html', {'asistentes': asistentes})
 
 # Vista para crear una reunión
 class ReunionCreateView(LoginRequiredMixin, CreateView):
